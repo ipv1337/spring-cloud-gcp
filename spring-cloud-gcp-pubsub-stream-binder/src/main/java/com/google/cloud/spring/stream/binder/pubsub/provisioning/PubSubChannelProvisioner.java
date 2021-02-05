@@ -25,6 +25,7 @@ import com.google.api.gax.rpc.AlreadyExistsException;
 import com.google.cloud.spring.pubsub.PubSubAdmin;
 import com.google.cloud.spring.stream.binder.pubsub.properties.PubSubConsumerProperties;
 import com.google.cloud.spring.stream.binder.pubsub.properties.PubSubProducerProperties;
+import com.google.pubsub.v1.ProjectSubscriptionName;
 import com.google.pubsub.v1.Subscription;
 import com.google.pubsub.v1.Topic;
 import com.google.pubsub.v1.TopicName;
@@ -79,7 +80,14 @@ public class PubSubChannelProvisioner
 
 		String subscriptionName;
 		Subscription subscription;
-		if (StringUtils.hasText(group)) {
+		if (StringUtils.hasText(properties.getExtension().getCustomSubscription())) {
+			String customName = properties.getExtension().getCustomSubscription();
+			subscriptionName = ProjectSubscriptionName.isParsableFrom(customName) ?
+					ProjectSubscriptionName.parse(customName).getSubscription() :
+					customName;
+			subscription = this.pubSubAdmin.getSubscription(customName);
+		}
+		else if (StringUtils.hasText(group)) {
 			subscriptionName = topicShortName + "." + group;
 			subscription = this.pubSubAdmin.getSubscription(subscriptionName);
 		}
