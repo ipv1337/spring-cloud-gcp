@@ -80,8 +80,8 @@ public class PubSubChannelProvisioner
 
 		String subscriptionName;
 		Subscription subscription;
-		if (StringUtils.hasText(properties.getExtension().getCustomSubscription())) {
-			String customName = properties.getExtension().getCustomSubscription();
+		String customName = properties.getExtension().getCustomSubscription();
+		if (StringUtils.hasText(customName)) {
 			subscriptionName = ProjectSubscriptionName.isParsableFrom(customName) ?
 					ProjectSubscriptionName.parse(customName).getSubscription() :
 					customName;
